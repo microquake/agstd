@@ -31,6 +31,7 @@ class pick_type:
                "P"      : P_Wave,
                "S"      : S_Wave}
 
+
 class SeismogramDescription(tables.IsDescription):
     """
     This object represent the datatype of a seismogram. We limit the size
@@ -38,14 +39,14 @@ class SeismogramDescription(tables.IsDescription):
     size, this table should be highly compressed to ensure a footprint as
     small as possible.
     """
-    seisX = tables.Float64Col(shape = 20000, pos = 0)
-    seisY = tables.Float64Col(shape = 20000, pos = 1)
-    seisZ = tables.Float64Col(shape = 20000, pos = 2)
-    station_id = tables.Int32Col(pos = 3) # Row position
-    event_id = tables.Int32Col(pos = 4) # Row position
-    sampling_rate = tables.Float64Col(pos = 5)
+    seisX = tables.Float64Col(shape=20000, pos=0)
+    seisY = tables.Float64Col(shape=20000, pos=1)
+    seisZ = tables.Float64Col(shape=20000, pos=2)
+    station_id = tables.Int32Col(pos=3) # Row position
+    event_id = tables.Int32Col(pos=4) # Row position
+    sampling_rate = tables.Float64Col(pos=5)
     
-    length = tables.Int32Col(shape = 3, pos = 6)
+    length = tables.Int32Col(shape=3, pos=6)
 
 
 class TriggerDescription(tables.IsDescription):
@@ -455,7 +456,6 @@ class ModelArray(object):
         self.stations = self.seismicdb.root.stations.read()
 
         # Reload the catalog
-        print 'voici le nom du catalog', self.catalog_name
         self.catalog = getattr(self.seismicdb.root.catalogs, self.catalog_name)
         self.traveltimes = self.catalog.traveltimes.col('traveltime')[self.pick_ids]
 

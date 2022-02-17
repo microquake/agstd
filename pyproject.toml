@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "agstd"
-version = "1.0.1"
+version = "1.0.3"
 description = ""
 authors = ["Your Name <you@example.com>"]
 
@@ -9,7 +9,6 @@ python = ">=3.8,<3.11"
 numpy = "^1.22.2"
 tables = "^3.7.0"
 pysqlite3 = "^0.4.6"
-eikonal = "^0.1.0"
 
 [tool.poetry.dev-dependencies]
 

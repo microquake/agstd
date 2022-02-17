@@ -135,9 +135,10 @@ if __name__ == "__main__":
     evtable=edata.EKEventTable(evdata.getTable())
     sttable=edata.EKStationTable(stdata.getTable())
 
-    print evtable.data
-    print sttable.data
-    print [t.station_id for t in ttdata.splitUnique(evdata.index, stdata.index)]
+    print(evtable.data)
+    print(sttable.data)
+    print([t.station_id for t in) 
+    ttdata.splitUnique(evdata.index, stdata.index)]
     """
 
 
