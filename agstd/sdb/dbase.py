@@ -1,12 +1,10 @@
 import numpy as np
-import scipy as sc
-import scipy.sparse
 
 import tables
 
-import  datetime, \
-        time, \
-        dateutil.parser
+import datetime
+import time
+import dateutil.parser
 
 
 import logging
