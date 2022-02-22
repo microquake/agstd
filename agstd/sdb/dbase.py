@@ -4,11 +4,11 @@ import tables
 
 import datetime
 import time
-import dateutil.parser
-
+import dateutils
 
 import logging
 log = logging.getLogger(__name__)
+
 
 def tounixtime(date):
     if isinstance(date, datetime.datetime) or isinstance(date, datetime.date):
@@ -16,7 +16,7 @@ def tounixtime(date):
     elif isinstance(date, int):
         return date
     elif isinstance(date, str):
-        return time.mktime(dateutil.parser.parse(date).timetuple())
+        return time.mktime(dateutils.parser.parse(date).timetuple())
     else:
         raise ValueError("Cannot be converted to unix time")
 
@@ -200,9 +200,9 @@ class SeismicHDF5DB(object):
             # Creating Basic Root Nodes
             self.root = self.h5f.createGroup('/', groupname, description)
             # Creating std Tables
-            self.h5f.createTable(self.root , "stations",
+            self.h5f.createTable(self.root, "stations",
                                  StationDescription, "Station description")
-            self.h5f.createTable(self.root , "events",
+            self.h5f.createTable(self.root, "events",
                                  SEventDescription, "Event description")
 
             # Creating the catalog group
@@ -237,7 +237,7 @@ class SeismicHDF5DB(object):
         full, length = self.root.seismograms[trigger_id]
         return full[:length]
 
-    def event_iterator(self, ptypes = [pick_type.S_Wave, pick_type.P_Wave]):
+    def event_iterator(self, ptypes=[pick_type.S_Wave, pick_type.P_Wave]):
         """
         This method iterate over the events and returns the event ID, the list
         of triggers
@@ -248,14 +248,18 @@ class SeismicHDF5DB(object):
         pick_table = self.root.triggers.pick.col('trigger_id')
         ptype_table = self.root.triggers.pick.col('pick_type')
         for evt_id in range(self.root.events.nrows):
-            trg_ids = range(*np.searchsorted(evt_trigger_table, [evt_id, evt_id + 1]))
+            trg_ids = range(*np.searchsorted(evt_trigger_table,
+                                             [evt_id, evt_id + 1]))
             for i, t in enumerate(trg_ids):
-                trg_ids[i] = t, [pid for pid in range(*np.searchsorted(pick_table, [t, t+1])) if ptype_table[pid] in ptypes]
+                trg_ids[i] = t, [pid for pid in
+                                 range(*np.searchsorted(pick_table, [t, t+1]))
+                                 if ptype_table[pid] in ptypes]
             yield evt_id, trg_ids
 
     def sanity_check(self):
         """
-        TODO : Should check for unsorted event_id, sanity of catalog data, one-to-many
+        TODO : Should check for unsorted event_id, sanity of catalog data,
+        one-to-many
         relations, etc...
         """
 
@@ -263,16 +267,19 @@ class SeismicHDF5DB(object):
         for c in self.root.catalogs:
             if c.events.nrows != self.root.events.nrows:
                 if log.isEnabledFor(logging.ERROR):
-                    log.error("Sanity check failed  [catalog : %s] number of events row mismatch")
+                    log.error("Sanity check failed  [catalog : %s] number of "
+                              "events row mismatch")
                 raise RuntimeError("Catalog Inconsistency detected")
             if c.traveltimes.nrows != self.root.triggers.pick.nrows:
                 if log.isEnabledFor(logging.ERROR):
-                    log.error("Sanity check failed  [catalog : %s] number of traveltime row mismatch")
+                    log.error("Sanity check failed  [catalog : %s] number of "
+                              "traveltime row mismatch")
                 raise RuntimeError("Catalog Inconsistency detected")
 
         if log.isEnabledFor(logging.INFO):
-            log.info("Sanity Check Passed for <%s, %s> %s" % \
-                    (self.h5f.filename, self.root._v_name, self.root._g_gettitle()))
+            log.info("Sanity Check Passed for <%s, %s> %s" %
+                    (self.h5f.filename, self.root._v_name,
+                     self.root._g_gettitle()))
 
     def sort_trigger(self, keys = ['event_id', 'station_id']):
         if self.h5f.mode == 'r':
@@ -280,7 +287,6 @@ class SeismicHDF5DB(object):
 
         t_table = self.root.triggers.description.read()
         p_table = self.root.triggers.pick.read()
-
 
         t_order = np.argsort(t_table, order = keys)
         t_table = t_table[t_order]
@@ -302,15 +308,13 @@ class SeismicHDF5DB(object):
             for c in self.root.catalogs:
                 tt = c.traveltimes.read()[p_order]
                 c.traveltimes.modifyRows(rows = tt)
-
-        except:
+        except Exception as e:
+            logging.warning(e)
             self.h5f.undo()
         finally:
             self.h5f.disableUndo()
 
-
-
-    def new_catalog(self, cname, override = False, description = "Catalog"):
+    def new_catalog(self, cname, override=False, description="Catalog"):
         """
         This method create a simple catalog with the given description and
         create the basic table hierarchy.
@@ -321,7 +325,7 @@ class SeismicHDF5DB(object):
         if hasattr(self.root.catalogs, cname):
             if override:
                 self.h5f.removeNode(self.root.catalogs,
-                                    name = cname, recursive = True)
+                                    name=cname, recursive=True)
             else:
                 raise AttributeError("Catalog already exists")
 

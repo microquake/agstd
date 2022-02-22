@@ -138,7 +138,7 @@ class Event(object):
                             del self.observers[oid]
                     else:
                         callback(*(args + cargs))
-                except Exception, e:
+                except Exception as e:
                     logger.exception(str(e))
 
     __call__ = dispatch
@@ -183,10 +183,12 @@ class EventDispatcherBase(object):
         oid = self.uid_gen.next() if "oid" not in kw else kw.pop("oid")
         for evt in self.events:
             try:
-                getattr(self, evt + "Event").addObserver(getattr(obj, evt), *args, oid = oid)
-            except AttributeError, err:
+                getattr(self, evt + "Event").addObserver(getattr(obj, evt),
+                                                         *args, oid = oid)
+            except AttributeError as err:
                 if logger.isEnabledFor(logging.WARNING):
-                    logger.warning("Object : %s do not have attribute -- %s --" % \
+                    logger.warning("Object : %s do not have "
+                                   "attribute -- %s --" % \
                                (repr(obj), evt))
         return oid
 
@@ -197,7 +199,7 @@ class EventDispatcherBase(object):
         for evt in self.events:
             try:
                 getattr(self, evt + "Event").removeObserver(oid)
-            except AttributeError, err:
+            except AttributeError as err:
                 pass
 
     def clear(self):
