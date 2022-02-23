@@ -78,7 +78,7 @@ def deprecated(fct):
     """
     @wraps(fct)
     def wrapper(*args, **kwargs):
-        logger.warning("Call to deprecated function %s." % (fct.__name_))
+        logger.warning("Call to deprecated function %s." % (fct.__name__))
         return fct(*args, **kwargs)
     return wrapper
 
