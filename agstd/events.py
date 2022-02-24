@@ -2,14 +2,14 @@
 #
 # vim: ts=4 sw=4 sts=0 expandtab:
 from __future__ import with_statement
-import os, new, copy, weakref, threading, time
+import os, copy, weakref, threading, time
 import logging
+import random
 
 logger = logging.getLogger(__name__)
 
-import random
 
-def uid_generator(random_init = False):
+def uid_generator(random_init=False):
     """
     This is a simple uid generator to intended to return unique id starting 
     """
@@ -19,7 +19,6 @@ def uid_generator(random_init = False):
         while(True):
             yield i
             i += 1
-
 
 
 class WeakBoundMethod(object):
@@ -44,7 +43,7 @@ class WeakBoundMethod(object):
                 im_self = self.im_self()
                 res = None
                 if im_self is not None:
-                        res = new.instancemethod(self.im_func, im_self, self.im_class)
+                        res = self.im_func.__get__(im_self, self.im_class))
                 return res
 
         def __repr__(self):
@@ -59,7 +58,6 @@ class WeakBoundMethod(object):
                 return "<weak bound method at %x; %s>" % (id(im_self), desc)
 
 
-
 class EventSupervisor(object):
         processing = False
         triggered = 0
@@ -72,7 +70,6 @@ class EventSupervisor(object):
 
         def __exit__(self, typ, value, traceback):
             self.processing = False
-
 
 
 
@@ -107,7 +104,7 @@ class Event(object):
 
         obj = observer
         if self.wref:
-            obj = WeakBoundMethod(obj) if isinstance(obj,new.instancemethod) else weakref.ref(obj)
+            obj = WeakBoundMethod(obj) if isinstance(obj) else weakref.ref(obj)
 
         self.observers[oid] = (obj, args)
         return oid
@@ -151,8 +148,6 @@ class Event(object):
 
     def __len__(self):
         return len(self.observers)
-
-
 
 
 class EventDispatcherBase(object):
