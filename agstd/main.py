@@ -53,12 +53,12 @@ def main(fct, **descr):
         if os.path.isdir(ns.output):
             for k in result:
                 fname = os.path.join(ns.output, k)
-                pickle.dump(result[k], open(fname, 'w'),
+                pickle.dump(result[k], open(fname, 'wb'),
                             protocol=pickle.HIGHEST_PROTOCOL)
                 info += '\n     --> %s' % fname
         else:
             dirname = os.path.dirname(ns.output)
-            pickle.dump(result, open(ns.output, 'w'),
+            pickle.dump(result, open(ns.output, 'wb'),
                         protocol=pickle.HIGHEST_PROTOCOL)
             info += '\n     --> %s' % ns.output
 

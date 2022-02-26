@@ -44,7 +44,7 @@ class DirectoryDB(object):
         if os.path.isdir(keypath):
             return DirectoryDB(keypath)
 
-        with open(keypath) as f:
+        with open(keypath, 'rb') as f:
             value = pickle.load(f)
 
         try:
@@ -68,7 +68,7 @@ class DirectoryDB(object):
         keypath = os.path.join(self.root, *splitPath)
         if not os.path.exists(dirpath):
             os.makedirs(dirpath)
-        with open(keypath, 'w') as f:
+        with open(keypath, 'wb') as f:
             pickle.dump(value, f, protocol=protocol)
         try:
             self.cache[key] = weakref.ref(value)
