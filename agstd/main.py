@@ -26,7 +26,7 @@ def main(fct, **descr):
     parser.add_argument("--info")
 
     ndefaults = -len(fct_descr.defaults) if fct_descr.defaults \
-                                            is not None else None
+        is not None else None
     for arg in fct_descr.args[:ndefaults]:
         arg_descr = dict()
         if arg in descr:
